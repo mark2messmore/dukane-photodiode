@@ -1,0 +1,58 @@
+Reference,Value,Description,Package,Footprint,LCSC,Type,Notes
+,,,,,,,"=== PHOTODIODE ==="
+PD1,GPD-N21-3mm,Extended InGaAs PIN PD 2.05um cutoff 3mm TO-5,TO-5,TO-5-3,QUOTE,THT,"GPD Optoelectronics N21 series. Contact sales@gpd-ir.com. Request: 3mm active dia, TO-5, flat AR window. Expect $200-500+, multi-week lead. Alt: Hamamatsu G12183-030K (2.6um cutoff, overkill but stocked)."
+,,,,,,,"=== ANALOG FRONT END - TIA ==="
+U1,OPA657U,Wideband TIA Op-Amp 1.6GHz GBW JFET input,SOIC-8,SOIC-8_3.9x4.9mm_P1.27mm,C2878144,Extended,"JFET input = no bias current error into PD node. Overkill bandwidth for 50-100Hz signal, but proven TIA topology. ~$10."
+R1,330R,TIA Feedback Resistor (high power ~10mW),0603,R_0603_1608Metric,C23138,Basic,"10mA x 330R = 3.3V output swing. Full beam power setting."
+R2,3.3K,TIA Feedback Resistor (low power ~1mW),0603,R_0603_1608Metric,C22978,Basic,"1mA x 3.3K = 3.3V output swing. Low power setting. Dark current offset: 27uA x 3.3K = ~89mV (subtract in software)."
+R3,100R,TIA non-inv input bias resistor,0603,R_0603_1608Metric,C22775,Basic,IN+ to AGND. Keeps non-inverting input at 0V (photovoltaic mode).
+C1,1nF,TIA feedback cap for stability,0603,C_0603_1608Metric,C1588,Basic,"CHANGED from 0.5pF. With 3.3K: BW = 48kHz. With 330R: BW = 482kHz. Both far above 50-100Hz signal. Use NP0/C0G."
+,,,,,,,"=== ANALOG FRONT END - BUFFER ==="
+U2,ADA4817-1ARDZ-R7,Unity-Gain Buffer for ADC drive,SOIC-8-EP,SOIC-8-EP_3.9x4.9mm_P1.27mm,C207502,Extended,"Pin 8=DIS tie to V+. EP pad to V- with thermal vias. Provides low-Z drive to Teensy ADC."
+R4,100R,Buffer input isolation resistor,0603,R_0603_1608Metric,C22775,Basic,TIA_OUT to buffer IN+
+,,,,,,,"=== POWER: -5V CHARGE PUMP ==="
+U5,TPS60403DBVR,-5V Unregulated Charge Pump Inverter,SOT-23-5,SOT-23-5,C7520,Extended,"Generates -5V from +5V USB. Required for OPA657 and ADA4817 V- rails."
+C16,1uF,TPS60403 input cap (Cin),0603,C_0603_1608Metric,C15849,Basic,Per TPS60403 datasheet. Ceramic X5R/X7R.
+C17,1uF,TPS60403 output cap (Cout),0603,C_0603_1608Metric,C15849,Basic,Per TPS60403 datasheet. Ceramic X5R/X7R.
+,,,,,,,"=== POWER: 3.3V LDO ==="
+U3,LP2985-33DBVR,3.3V 150mA Low-Noise LDO,SOT-23-5,SOT-23-5,C95414,Extended,"Powers 74HC14 at 3.3V (avoids 5V logic level issue with Teensy). Also provides clean 3.3VA test point."
+C10,100nF,LP2985 input decoupling,0603,C_0603_1608Metric,C14663,Basic,
+C11,10uF,LP2985 input bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+C12,100nF,LP2985 output decoupling,0603,C_0603_1608Metric,C14663,Basic,
+C13,10uF,LP2985 output bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+C14,10nF,LP2985 bypass pin cap,0603,C_0603_1608Metric,C1588,Basic,Per LP2985 datasheet
+,,,,,,,"=== ENCODER CONDITIONING ==="
+U4,SN74HC14DR,Hex Schmitt-Trigger Inverter,SOIC-14,SOIC-14_3.9x8.65mm_P1.27mm,C6820,Extended,"Run on 3.3V from LP2985. Outputs are now 3.3V logic = Teensy-safe on all pins."
+R6,10K,Encoder A pull-up to 3.3V,0603,R_0603_1608Metric,C25804,Basic,Pull-up to 3.3V rail (was 5V)
+R7,10K,Encoder B pull-up to 3.3V,0603,R_0603_1608Metric,C25804,Basic,Pull-up to 3.3V rail (was 5V)
+R8,10K,Encoder Index pull-up to 3.3V,0603,R_0603_1608Metric,C25804,Basic,Pull-up to 3.3V rail (was 5V)
+C15,100nF,74HC14 VCC decoupling,0603,C_0603_1608Metric,C14663,Basic,Close to pin 14. VCC = 3.3V now.
+,,,,,,,"=== OP-AMP DECOUPLING ==="
+C2,100nF,OPA657 V+ decoupling,0603,C_0603_1608Metric,C14663,Basic,Close to pin 7
+C3,10uF,OPA657 V+ bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+C4,100nF,OPA657 V- decoupling,0603,C_0603_1608Metric,C14663,Basic,Close to pin 4
+C5,10uF,OPA657 V- bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+C6,100nF,ADA4817 V+ decoupling,0603,C_0603_1608Metric,C14663,Basic,Close to pin 7
+C7,10uF,ADA4817 V+ bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+C8,100nF,ADA4817 V- decoupling,0603,C_0603_1608Metric,C14663,Basic,Close to pin 4
+C9,10uF,ADA4817 V- bulk decoupling,0805,C_0805_2012Metric,C15850,Basic,
+,,,,,,,"=== INDICATOR ==="
+R5,1K,Power LED current limiting,0603,R_0603_1608Metric,C21190,Basic,~3mA at 5V
+D1,Green,Power indicator LED,0603,LED_0603_1608Metric,C72043,Basic,
+,,,,,,,"=== CONNECTORS ==="
+J2,Gain_Select,1x3 pin header for gain jumper,2.54mm,PinHeader_1x03_P2.54mm,C49257,Basic,"Selects R1 (330R) or R2 (3.3K). Include shorting jumper cap."
+J4,Teensy_L,1x14 female header - Teensy left side,2.54mm,PinSocket_1x14_P2.54mm,HAND_SOURCE,THT,Buy 1x40 strips and cut to 14.
+J5,Teensy_R,1x14 female header - Teensy right side,2.54mm,PinSocket_1x14_P2.54mm,HAND_SOURCE,THT,Same as J4
+J6,Encoder,JST-XH 5-pin header vertical,JST-XH,JST_XH_B5B-XH-A,C157991,Extended,5V GND A B Index
+J7,ESC,JST-XH 3-pin header vertical,JST-XH,JST_XH_B3B-XH-A,C144394,Extended,PWM 5V GND
+,,,,,,,"=== TEST POINTS ==="
+TP1,TIA_OUT,Test point - TIA output,1.5mm pad,TestPoint_Pad_1.5mm,,SMD,
+TP2,BUF_OUT,Test point - buffer output to ADC,1.5mm pad,TestPoint_Pad_1.5mm,,SMD,
+TP3,3.3VA,Test point - 3.3V analog rail,1.5mm pad,TestPoint_Pad_1.5mm,,SMD,
+TP4,AGND,Test point - analog ground,1.5mm pad,TestPoint_Pad_1.5mm,,SMD,
+TP5,NEG5V,Test point - negative 5V rail,1.5mm pad,TestPoint_Pad_1.5mm,,SMD,
+,,,,,,,"=== MECHANICAL ==="
+H1,M3,Mounting hole corner 1,M3,MountingHole_3.2mm_M3,,Mechanical,
+H2,M3,Mounting hole corner 2,M3,MountingHole_3.2mm_M3,,Mechanical,
+H3,M3,Mounting hole corner 3,M3,MountingHole_3.2mm_M3,,Mechanical,
+H4,M3,Mounting hole corner 4,M3,MountingHole_3.2mm_M3,,Mechanical,
